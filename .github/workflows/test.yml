@@ -29,8 +29,21 @@ jobs:
 
       - name: Install rtk
         shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
-          curl -fsSL https://raw.githubusercontent.com/rtk-ai/rtk/refs/heads/master/install.sh | sh
+          case "${{ runner.os }}-${{ runner.arch }}" in
+            Linux-X64)   ASSET=rtk-x86_64-unknown-linux-musl.tar.gz ;;
+            Linux-ARM64) ASSET=rtk-aarch64-unknown-linux-gnu.tar.gz ;;
+            macOS-X64)   ASSET=rtk-x86_64-apple-darwin.tar.gz ;;
+            macOS-ARM64) ASSET=rtk-aarch64-apple-darwin.tar.gz ;;
+            *) echo "Unsupported runner: ${{ runner.os }}-${{ runner.arch }}"; exit 1 ;;
+          esac
+          mkdir -p "$HOME/.local/bin"
+          cd "$RUNNER_TEMP"
+          gh release download --repo rtk-ai/rtk --pattern "$ASSET"
+          tar -xzf "$ASSET"
+          install -m 0755 rtk "$HOME/.local/bin/rtk"
           echo "$HOME/.local/bin" >> "$GITHUB_PATH"
 
       - name: Verify rtk
