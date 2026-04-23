@@ -3,3 +3,7 @@ node_modules/
 .pi/
 *.tgz
 dist/
+
+# Benchmark outputs: keep only the committed sample
+benchmark/results/*.md
+!benchmark/results/sample.md

@@ -103,12 +103,12 @@ cd pi-rtk
 npm install
 ```
 
-Run the test suite:
+### Correctness tests
 
 ```bash
-npm test               # all suites (94 tests)
-npm run test:unit      # unit tests only (51)
-npm run test:e2e       # e2e tests only (36)
+npm test                  # all suites (94 tests)
+npm run test:unit         # unit tests only (51)
+npm run test:e2e          # e2e tests only (36)
 npm run test:integration  # requires rtk on PATH (7; auto-skipped otherwise)
 ```
 
@@ -129,6 +129,21 @@ TypeScript source modules are loaded via `jiti` (matching how pi itself
 loads extensions), so no build step is needed.
 
 CI runs the full suite on `{ubuntu-latest, macos-latest} × Node {22, 24}`.
+
+### Effectiveness benchmark
+
+Measures how many tokens pi-rtk actually saves. Runs every task 5 times
+per arm (baseline vs. rtk), serial and interleaved, and writes a
+statistical report.
+
+```bash
+npm run bench
+```
+
+See [`benchmark/README.md`](benchmark/README.md) for methodology and
+[`benchmark/results/sample.md`](benchmark/results/sample.md) for a
+representative run. Aggregate on the committed sample: **95% token
+reduction** across `git`, `ls`, `find`, and `grep` tasks.
 
 ## License
 

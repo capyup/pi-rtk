@@ -33,6 +33,7 @@
     "test": "node --test --test-reporter=spec 'test/**/*.test.mjs'",
     "test:unit": "node --test --test-reporter=spec 'test/unit/**/*.test.mjs'",
     "test:e2e": "node --test --test-reporter=spec 'test/e2e/**/*.test.mjs'",
-    "test:integration": "node --test --test-reporter=spec 'test/integration/**/*.test.mjs'"
+    "test:integration": "node --test --test-reporter=spec 'test/integration/**/*.test.mjs'",
+    "bench": "node benchmark/run.mjs"
   }
 }

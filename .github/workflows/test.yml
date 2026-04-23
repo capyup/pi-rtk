@@ -56,3 +56,12 @@ jobs:
 
       - name: Run unit + e2e + integration tests
         run: npm test
+
+      - name: Smoke-run the effectiveness benchmark
+        # Just verify the benchmark script executes end-to-end with a single
+        # rep and no warmup; we do not gate CI on the numerical outcome.
+        env:
+          REPS: "1"
+          WARMUP: "0"
+          BENCH_QUIET: "1"
+        run: npm run bench
