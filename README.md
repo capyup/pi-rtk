@@ -93,6 +93,43 @@ rtk binary. All rewrite decisions are delegated to `rtk rewrite`, which is
 the single source of truth defined in `src/discover/registry.rs` of the rtk
 repository. To add or change rewrite rules, file a PR against rtk itself.
 
+## Development
+
+Clone the repo and install dev dependencies:
+
+```bash
+git clone https://github.com/lulucatdev/pi-rtk.git
+cd pi-rtk
+npm install
+```
+
+Run the test suite:
+
+```bash
+npm test               # all suites (94 tests)
+npm run test:unit      # unit tests only (51)
+npm run test:e2e       # e2e tests only (36)
+npm run test:integration  # requires rtk on PATH (7; auto-skipped otherwise)
+```
+
+The test layout:
+
+- `test/unit/` — pure-function tests against the `config`, `version`,
+  `rewrite`, and `awareness` modules, using a programmable `pi.exec`
+  stub so no real `rtk` binary is required.
+- `test/e2e/` — drives the extension factory with a fake
+  `ExtensionAPI` + `ExtensionContext`, fires synthetic `session_start`,
+  `before_agent_start`, `tool_call` events, and invokes the `/rtk`
+  command to verify registered handlers end-to-end.
+- `test/integration/` — exercises the real `rtk` binary to protect
+  against drift in the `rtk rewrite` exit-code contract. Skipped
+  automatically when `rtk` is not installed.
+
+TypeScript source modules are loaded via `jiti` (matching how pi itself
+loads extensions), so no build step is needed.
+
+CI runs the full suite on `{ubuntu-latest, macos-latest} × Node {22, 24}`.
+
 ## License
 
 MIT.
