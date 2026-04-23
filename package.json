@@ -1,0 +1,28 @@
+{
+  "name": "pi-rtk",
+  "version": "0.1.0",
+  "description": "pi integration for rtk (Rust Token Killer) — transparently rewrites bash tool calls to rtk equivalents for 60-90% token savings.",
+  "type": "module",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lulucatdev/pi-rtk.git"
+  },
+  "keywords": [
+    "pi-package",
+    "pi-extension",
+    "rtk",
+    "token-optimization"
+  ],
+  "pi": {
+    "extensions": [
+      "./extensions"
+    ],
+    "skills": [
+      "./skills"
+    ]
+  },
+  "peerDependencies": {
+    "@mariozechner/pi-coding-agent": "*"
+  }
+}
