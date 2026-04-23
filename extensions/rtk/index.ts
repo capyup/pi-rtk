@@ -17,47 +17,15 @@
 import type { ExtensionAPI } from "@mariozechner/pi-coding-agent";
 import { isToolCallEventType } from "@mariozechner/pi-coding-agent";
 import { AWARENESS_TEXT } from "./awareness.js";
+import {
+	clampLines,
+	MAX_WIDGET_LINES,
+	readConfig,
+	STATUS_KEY,
+	WIDGET_KEY,
+} from "./config.js";
 import { rewriteCommand } from "./rewrite.js";
 import { checkRtkInstallation } from "./version.js";
-
-type AskMode = "auto" | "confirm";
-
-interface Config {
-	disabled: boolean;
-	askMode: AskMode;
-	awareness: boolean;
-	timeoutMs: number;
-	quiet: boolean;
-}
-
-const WIDGET_KEY = "rtk";
-const STATUS_KEY = "rtk";
-const MAX_WIDGET_LINES = 40;
-
-function readConfig(): Config {
-	const parseInt10 = (raw: string | undefined, fallback: number): number => {
-		if (!raw) return fallback;
-		const n = Number.parseInt(raw, 10);
-		return Number.isFinite(n) && n > 0 ? n : fallback;
-	};
-	const askModeRaw = (process.env.PI_RTK_ASK_MODE ?? "auto").toLowerCase();
-	const askMode: AskMode = askModeRaw === "confirm" ? "confirm" : "auto";
-	return {
-		disabled: process.env.PI_RTK_DISABLED === "1",
-		askMode,
-		awareness: process.env.PI_RTK_AWARENESS !== "0",
-		timeoutMs: parseInt10(process.env.PI_RTK_TIMEOUT_MS, 2000),
-		quiet: process.env.PI_RTK_QUIET === "1",
-	};
-}
-
-function clampLines(text: string, max: number): string[] {
-	const lines = text.split(/\r?\n/);
-	if (lines.length <= max) return lines;
-	const kept = lines.slice(0, max);
-	kept.push(`… (${lines.length - max} more line(s) truncated)`);
-	return kept;
-}
 
 export default async function rtkExtension(pi: ExtensionAPI) {
 	const config = readConfig();
