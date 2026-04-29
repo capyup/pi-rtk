@@ -11,6 +11,7 @@ export interface Config {
 	awareness: boolean;
 	timeoutMs: number;
 	quiet: boolean;
+	latex: boolean;
 }
 
 export const WIDGET_KEY = "rtk";
@@ -38,6 +39,7 @@ export function readConfig(env: Record<string, string | undefined> = process.env
 		awareness: env.PI_RTK_AWARENESS !== "0",
 		timeoutMs: parsePositiveInt(env.PI_RTK_TIMEOUT_MS, DEFAULT_TIMEOUT_MS),
 		quiet: env.PI_RTK_QUIET === "1",
+		latex: env.PI_RTK_LATEX !== "0",
 	};
 }
 

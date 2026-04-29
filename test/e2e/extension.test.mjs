@@ -65,6 +65,7 @@ async function boot({ env = {}, probe = "ok" } = {}) {
 		"PI_RTK_AWARENESS",
 		"PI_RTK_TIMEOUT_MS",
 		"PI_RTK_QUIET",
+		"PI_RTK_LATEX",
 	]) {
 		prior[key] = process.env[key];
 		if (key in env) process.env[key] = env[key];
@@ -256,12 +257,30 @@ test("tool_call: confirm mode falls back to auto-apply when ctx has no UI", asyn
 	assert.equal(ctx.ui.confirmCalls.length, 0);
 });
 
-test("tool_call: no-equivalent (exit 1) leaves the command untouched", async () => {
+test("tool_call: no-equivalent (exit 1) leaves non-LaTeX commands untouched", async () => {
 	const h = await boot();
 	h.execStub.enqueue(execResult({ stdout: "", code: 1 }));
 	const event = makeBashToolCallEvent("echo hello");
 	await h.fire("tool_call", event, createFakeCtx());
 	assert.equal(event.input.command, "echo hello");
+});
+
+test("tool_call: no-equivalent LaTeX command uses the local transcript summarizer", async () => {
+	const h = await boot();
+	h.execStub.enqueue(execResult({ stdout: "", code: 1 }));
+	const event = makeBashToolCallEvent("cd paper && latexmk -xelatex -interaction=nonstopmode main.tex");
+	await h.fire("tool_call", event, createFakeCtx());
+	assert.match(event.input.command, /^node /);
+	assert.match(event.input.command, /latex-runner\.mjs/);
+	assert.notEqual(event.input.command, "cd paper && latexmk -xelatex -interaction=nonstopmode main.tex");
+});
+
+test("tool_call: PI_RTK_LATEX=0 disables the local LaTeX fallback", async () => {
+	const h = await boot({ env: { PI_RTK_LATEX: "0" } });
+	h.execStub.enqueue(execResult({ stdout: "", code: 1 }));
+	const event = makeBashToolCallEvent("latexmk -xelatex main.tex");
+	await h.fire("tool_call", event, createFakeCtx());
+	assert.equal(event.input.command, "latexmk -xelatex main.tex");
 });
 
 test("tool_call: deny-rule (exit 2) leaves the command untouched", async () => {

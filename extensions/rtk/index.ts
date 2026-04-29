@@ -12,8 +12,10 @@
  *   PI_RTK_AWARENESS=0           skip the system-prompt addition
  *   PI_RTK_TIMEOUT_MS=2000       per-call timeout for `rtk rewrite`
  *   PI_RTK_QUIET=1               suppress startup notifications
+ *   PI_RTK_LATEX=0               disable local LaTeX transcript summarization
  */
 
+import { fileURLToPath } from "node:url";
 import type { ExtensionAPI } from "@mariozechner/pi-coding-agent";
 import { isToolCallEventType } from "@mariozechner/pi-coding-agent";
 import { AWARENESS_TEXT } from "./awareness.js";
@@ -24,8 +26,11 @@ import {
 	STATUS_KEY,
 	WIDGET_KEY,
 } from "./config.js";
+import { buildLatexRewrite } from "./latex.js";
 import { rewriteCommand } from "./rewrite.js";
 import { checkRtkInstallation } from "./version.js";
+
+const LATEX_RUNNER_PATH = fileURLToPath(new URL("./latex-runner.mjs", import.meta.url));
 
 export default async function rtkExtension(pi: ExtensionAPI) {
 	const config = readConfig();
@@ -97,8 +102,13 @@ export default async function rtkExtension(pi: ExtensionAPI) {
 		});
 
 		switch (outcome.kind) {
-			case "unchanged":
+			case "unchanged": {
+				if (config.latex) {
+					const latexRewrite = buildLatexRewrite(originalCommand, LATEX_RUNNER_PATH);
+					if (latexRewrite) event.input.command = latexRewrite;
+				}
 				return undefined;
+			}
 			case "rewrite":
 				event.input.command = outcome.command;
 				return undefined;

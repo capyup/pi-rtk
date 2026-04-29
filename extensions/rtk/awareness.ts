@@ -10,7 +10,9 @@ to use \`rtk\` before execution (for example, \`git status\` becomes \`rtk git
 status\`). This is transparent and delivers 60-90% token savings on the
 supported command categories: git, cargo, go/pytest/jest/vitest, tsc,
 eslint/ruff/biome/prettier, docker/kubectl, aws, pnpm/pip, ls/find/grep/cat
-variants, and more.
+variants, and more. LaTeX build commands (\`latexmk\`, \`xelatex\`, \`pdflatex\`,
+etc.) are summarized locally: full transcripts go to \`.pi/rtk/latex/*.log\`,
+while the agent sees only status, key diagnostics, and the log path.
 
 The auto-rewrite only applies to the \`bash\` tool. The built-in \`read\`,
 \`grep\`, \`glob\`, and \`list\` tools bypass this hook. When token-efficient

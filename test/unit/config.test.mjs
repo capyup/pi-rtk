@@ -12,6 +12,7 @@ test("readConfig: empty env yields defaults", () => {
 	assert.equal(c.awareness, true);
 	assert.equal(c.timeoutMs, DEFAULT_TIMEOUT_MS);
 	assert.equal(c.quiet, false);
+	assert.equal(c.latex, true);
 });
 
 test("readConfig: PI_RTK_DISABLED=1 sets disabled", () => {
@@ -58,6 +59,12 @@ test("readConfig: PI_RTK_QUIET=1 enables quiet mode", () => {
 	assert.equal(readConfig({ PI_RTK_QUIET: "" }).quiet, false);
 });
 
+test("readConfig: PI_RTK_LATEX=0 disables LaTeX summarization", () => {
+	assert.equal(readConfig({ PI_RTK_LATEX: "0" }).latex, false);
+	assert.equal(readConfig({ PI_RTK_LATEX: "1" }).latex, true);
+	assert.equal(readConfig({ PI_RTK_LATEX: "" }).latex, true);
+});
+
 test("readConfig: unspecified env argument defaults to process.env", () => {
 	// Deliberately do not mutate real env; simply confirm it runs and returns
 	// a well-formed Config.
@@ -67,6 +74,7 @@ test("readConfig: unspecified env argument defaults to process.env", () => {
 	assert.equal(typeof c.awareness, "boolean");
 	assert.equal(typeof c.timeoutMs, "number");
 	assert.equal(typeof c.quiet, "boolean");
+	assert.equal(typeof c.latex, "boolean");
 });
 
 test("clampLines: returns all lines when at or below limit", () => {

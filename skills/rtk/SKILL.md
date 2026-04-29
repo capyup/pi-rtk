@@ -19,6 +19,11 @@ required — write the bash command normally, the hook will replace it.
   `glob`, and `list` tools bypass it.
 - Any rewrite-eligible command (see categories above) is replaced by its
   `rtk <cmd>` form.
+- LaTeX build commands (`latexmk`, `xelatex`, `pdflatex`, `lualatex`,
+  `tectonic`, `bibtex`, `biber`, `makeindex`, `makeglossaries`, `xdvipdfmx`)
+  are wrapped by a local transcript summarizer when upstream `rtk rewrite` has
+  no equivalent. The full stdout/stderr transcript goes to `.pi/rtk/latex/*.log`;
+  the agent sees a compact status/diagnostics summary and the log path.
 - `rtk` already in the command (`rtk git status`) is preserved unchanged; the
   hook never produces `rtk rtk …`.
 - Commands joined with `&&`, `||`, `;`, or `|` are handled per-segment by rtk
@@ -75,6 +80,8 @@ one invocation, for example `RTK_DISABLED=1 git status`.
 | `PI_RTK_AWARENESS=0`    | Skip the system-prompt addition                       |
 | `PI_RTK_TIMEOUT_MS=2000`| Per-call timeout for `rtk rewrite`                    |
 | `PI_RTK_QUIET=1`        | Suppress startup notifications                        |
+| `PI_RTK_LATEX=0`        | Disable local LaTeX transcript summarization          |
+| `PI_RTK_LATEX_LOG_DIR`  | Override `.pi/rtk/latex` transcript directory         |
 
 ## Failure model
 

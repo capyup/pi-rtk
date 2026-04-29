@@ -9,9 +9,10 @@ Cursor, Codex, OpenCode, and others.
 
 The extension hooks pi's `tool_call` event, feeds each bash command through
 `rtk rewrite`, and substitutes the rewritten command in place before
-execution. All rewrite decisions are delegated to the rtk binary's
-registry; pi-rtk is a thin delegate with the same shape as rtk's official
-OpenCode plugin.
+execution. Most rewrite decisions are delegated to the rtk binary's registry; pi-rtk also
+ships a small local LaTeX fallback that captures verbose TeX transcripts to disk
+and returns a compact build summary. The core integration otherwise keeps the
+same shape as rtk's official OpenCode plugin.
 
 ## Measured effectiveness
 
@@ -92,6 +93,12 @@ pi remove git:github.com/lulucatdev/pi-rtk         # uninstall
   the extension invokes `rtk rewrite <command>` and rewrites
   `event.input.command` in place when rtk returns a token-optimized
   equivalent. Same pattern as rtk's official OpenCode plugin.
+- **LaTeX build summaries**: when upstream `rtk rewrite` has no equivalent
+  for `latexmk`, `xelatex`, `pdflatex`, `lualatex`, `tectonic`, `bibtex`,
+  `biber`, `makeindex`, `makeglossaries`, or `xdvipdfmx`, pi-rtk wraps the
+  original shell command in a local runner. The full stdout/stderr transcript
+  is written to `.pi/rtk/latex/*.log`; the agent only sees status, artifact
+  lines, important errors/warnings, overfull boxes above 1pt, and the log path.
 - **System-prompt addition**: appends a short awareness block to every
   turn's system prompt so the model knows about the bash-only scope and
   about meta commands (`rtk gain`, `rtk discover`, …) that are not
@@ -120,6 +127,8 @@ All configuration is via environment variables; no settings file is read.
 | `PI_RTK_AWARENESS`        | `1`     | Set `0` to skip the system-prompt addition                         |
 | `PI_RTK_TIMEOUT_MS`       | `2000`  | Per-call timeout for `rtk rewrite` (ms)                            |
 | `PI_RTK_QUIET`            | unset   | If `1`, suppress startup notifications                             |
+| `PI_RTK_LATEX`            | `1`     | Set `0` to disable local LaTeX transcript summarization            |
+| `PI_RTK_LATEX_LOG_DIR`    | unset   | Override the default `.pi/rtk/latex` transcript directory          |
 
 `rtk`'s own per-command opt-out also works: prefix a command with
 `RTK_DISABLED=1` (for example `RTK_DISABLED=1 git status`) to bypass the
@@ -137,9 +146,11 @@ old (suppressible with `PI_RTK_QUIET=1`).
 ## Relationship to upstream rtk
 
 This package is independent of rtk and does not require any change to
-the rtk binary. All rewrite decisions are delegated to `rtk rewrite`,
+the rtk binary. General rewrite decisions are delegated to `rtk rewrite`,
 which is the single source of truth defined in `src/discover/registry.rs`
-of the rtk repository. To add or change rewrite rules, file a PR against
+of the rtk repository. The only local exception is the LaTeX transcript
+summarizer, which exists because TeX builds are especially verbose and already
+produce canonical `.log` files. For non-LaTeX rewrite rules, file a PR against
 rtk itself.
 
 ## Development
@@ -152,12 +163,12 @@ cd pi-rtk
 npm install
 ```
 
-### Correctness tests (94 tests, ~0.8 s local)
+### Correctness tests (102 tests, ~0.8 s local)
 
 ```bash
 npm test                  # all suites
-npm run test:unit         # unit tests only (51)
-npm run test:e2e          # e2e tests only (36)
+npm run test:unit         # unit tests only (57)
+npm run test:e2e          # e2e tests only (38)
 npm run test:integration  # requires rtk on PATH (7; auto-skipped otherwise)
 ```
 
@@ -315,9 +326,9 @@ git clone https://github.com/lulucatdev/pi-rtk.git
 cd pi-rtk
 npm install
 
-npm test                  # 正确性测试（94 条，本机 ~0.8 s）
-npm run test:unit         # 仅 unit（51 条）
-npm run test:e2e          # 仅 e2e（36 条）
+npm test                  # 正确性测试（102 条，本机 ~0.8 s）
+npm run test:unit         # 仅 unit（57 条）
+npm run test:e2e          # 仅 e2e（38 条）
 npm run test:integration  # 依赖真实 rtk，无 rtk 时自动跳过（7 条）
 
 npm run bench             # 效果基准（5 任务 × 5 次 × 2 arm，本机 ~8 s）
