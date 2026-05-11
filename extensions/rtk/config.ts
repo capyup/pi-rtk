@@ -1,5 +1,5 @@
 /**
- * Pure configuration helpers for pi-rtk. Kept free of @mariozechner/pi-coding-agent
+ * Pure configuration helpers for pi-rtk. Kept free of @earendil-works/pi-coding-agent
  * imports so that unit tests can exercise them in isolation.
  */
 

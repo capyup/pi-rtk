@@ -80,11 +80,11 @@ see [`benchmark/README.md`](benchmark/README.md).
 ## Installation
 
 ```bash
-pi install git:github.com/lulucatdev/pi-rtk        # global
-pi install -l git:github.com/lulucatdev/pi-rtk     # project-local
-pi -e git:github.com/lulucatdev/pi-rtk             # run once without installing
-pi update git:github.com/lulucatdev/pi-rtk         # pull the latest
-pi remove git:github.com/lulucatdev/pi-rtk         # uninstall
+pi install git:github.com/capyup/pi-rtk        # global
+pi install -l git:github.com/capyup/pi-rtk     # project-local
+pi -e git:github.com/capyup/pi-rtk             # run once without installing
+pi update git:github.com/capyup/pi-rtk         # pull the latest
+pi remove git:github.com/capyup/pi-rtk         # uninstall
 ```
 
 ## What the extension does
@@ -338,5 +338,8 @@ CI 矩阵 `{ubuntu-latest, macos-latest} × Node {22, 24}`，每个 job 完整�
 正确性测试并烟测 benchmark 脚本。
 
 ### 协议
+
+MIT。
+ 协议
 
 MIT。

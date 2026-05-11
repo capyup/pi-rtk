@@ -13,7 +13,7 @@ import { loadExt } from "../helpers/loader.mjs";
 const { rewriteCommand } = await loadExt("rewrite");
 const { checkRtkInstallation } = await loadExt("version");
 
-// Minimal pi.exec stand-in mirroring @mariozechner/pi-coding-agent's
+// Minimal pi.exec stand-in mirroring @earendil-works/pi-coding-agent's
 // execCommand. Only the parts used by version.ts / rewrite.ts.
 const realExecPi = {
 	exec: (command, args, options = {}) =>

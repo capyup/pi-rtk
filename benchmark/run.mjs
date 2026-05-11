@@ -63,7 +63,7 @@ const TASKS = [
 		description: "List two populated node_modules subtrees",
 		commands: [
 			"ls -la node_modules/jiti/lib",
-			"ls -la node_modules/@mariozechner/pi-coding-agent/dist/core",
+			"ls -la node_modules/@earendil-works/pi-coding-agent/dist/core",
 		],
 	},
 	{
